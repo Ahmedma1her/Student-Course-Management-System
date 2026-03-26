@@ -4,8 +4,11 @@
 #include <sstream>
 #include <iterator>
 
+using namespace std;
+
 // ================= Student Class Implementation =================
-Student::Student(int studentId, string studentName, double gpa) : Person(studentName), studentId(studentId), gradePointAverage(gpa) {}
+Student::Student(int studentId, string studentName, double gpa)
+    : Person(studentName), studentId(studentId), gradePointAverage(gpa) {}
 
 int Student::getId() const { return studentId; }
 double Student::getGpa() const { return gradePointAverage; }
@@ -32,7 +35,7 @@ void Student::showCourses() const
     }
 
     cout << "Courses: ";
-    for (auto c : enrolledCourses)
+    for (const auto &c : enrolledCourses)
     {
         cout << c << " ";
     }
@@ -78,7 +81,7 @@ void addStudent(vector<Student> &studentList)
     }
 
     // Check ID uniqueness
-    for (auto s : studentList)
+    for (const auto &s : studentList)
     {
         if (s.getId() == studentId)
         {
@@ -162,7 +165,7 @@ void displayAll(vector<Student> &studentList)
         return;
     }
 
-    for (auto s : studentList)
+    for (const auto &s : studentList)
     {
         s.display();
     }
@@ -236,7 +239,7 @@ void showCourses(vector<Student> &studentList)
 void sortStudents(vector<Student> &studentList)
 {
     sort(studentList.begin(), studentList.end(),
-         [](Student a, Student b)
+         [](const Student &a, const Student &b)
          {
              return a.getGpa() > b.getGpa();
          });
@@ -248,19 +251,24 @@ void sortStudents(vector<Student> &studentList)
 // Save to File
 void saveToFile(vector<Student> &studentList)
 {
-    ofstream file("students.txt");
+    ofstream file("students.txt", ios::out);
+
     if (!file.is_open())
     {
         cout << "Error opening file for saving\n";
         return;
     }
 
-    for (auto &s : studentList)
+    cout << "Saving " << studentList.size() << " students...\n";
+
+    for (const auto &s : studentList)
     {
         file << s.getId() << "," << s.getName() << "," << s.getGpa() << ",";
+
         auto courses = s.getCourses();
         bool first = true;
-        for (auto &c : courses)
+
+        for (const auto &c : courses)
         {
             if (!first)
                 file << ";";
@@ -271,48 +279,61 @@ void saveToFile(vector<Student> &studentList)
     }
 
     file.close();
+    cout << "Data saved successfully.\n";
 }
 
 // Load from File
 void loadFromFile(vector<Student> &studentList)
 {
+    studentList.clear();
+
     ifstream file("students.txt");
+
     if (!file.is_open())
     {
-        cout << "Error opening file for loading\n";
+        cout << "No existing data file found.\n";
         return;
     }
 
     string line;
+
     while (getline(file, line))
     {
         stringstream ss(line);
         string token;
+
         getline(ss, token, ',');
         if (token.empty())
             continue;
+
         try
         {
             int studentId = stoi(token);
+
             getline(ss, token, ',');
             string studentName = token;
+
             getline(ss, token, ',');
             double gpa = stod(token);
+
             getline(ss, token, ',');
             string courses_str = token;
+
             Student s(studentId, studentName, gpa);
+
             stringstream css(courses_str);
             string course;
+
             while (getline(css, course, ';'))
             {
                 if (!course.empty())
                     s.addCourse(course);
             }
+
             studentList.push_back(s);
         }
         catch (...)
         {
-            // Skip invalid lines
             continue;
         }
     }
