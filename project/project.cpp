@@ -40,17 +40,17 @@ public:
             << " | Name: " << name
             << " | GPA: " << gradePointAverage << endl;
     }
-
+//add courses
     void addCourse(const string& course)
     {
         enrolledCourses.insert(course);
     }
-
+//show all
     void showCourses() const
     {
         if (enrolledCourses.empty())
         {
-            cout << "No courses enrolled\n";
+            cout << "No courses enrolled"<<endl;
             return;
         }
 
@@ -85,19 +85,19 @@ void addStudent(vector<Student>& studentList)
     cout << "Enter Name: ";
     getline(cin, name);
 
-    cout << "Enter GPA: ";
-    if (!(cin >> gpa)) { clearInput(); return; }
-
-    for (auto& s : studentList)
+     for (auto& s : studentList)
         if (s.getId() == id)
         {
-            cout << "ID exists!\n";
+            cout << "ID exists!"<<endl;
             return;
         }
 
+    cout << "Enter GPA: ";
+    if (!(cin >> gpa)) { clearInput(); return; }
+
     if (gpa < 0 || gpa > 4)
     {
-        cout << "Invalid GPA\n";
+        cout << "Invalid GPA"<<endl;
         return;
     }
 
